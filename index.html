@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ICS 106 | Smart Object Recognition</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <div>
+        <p class="course">ICS 106 · Laboratory 02</p>
+        <h1>Smart Object Recognition</h1>
+        <p class="muted">Test a Teachable Machine image model with fixed photos, compare V1 against V2, or try it live with the webcam.</p>
+      </div>
+      <div class="active-chip" id="activeChip" data-state="none" aria-live="polite">
+        <span class="chip-label">Active model</span>
+        <strong id="activeModel">None loaded</strong>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="col-main">
+
+        <section class="panel" aria-labelledby="model-heading">
+          <h2 id="model-heading">Load a model</h2>
+          <div class="form-grid">
+            <label for="modelVersion">Version
+              <select id="modelVersion">
+                <option value="V1">V1 (baseline)</option>
+                <option value="V2">V2 (improved)</option>
+              </select>
+            </label>
+            <label for="modelUrl">Teachable Machine model URL
+              <input id="modelUrl" type="url" inputmode="url" placeholder="https://teachablemachine.withgoogle.com/models/YOUR_ID/" autocomplete="off" spellcheck="false">
+            </label>
+          </div>
+          <div class="actions">
+            <button id="loadBtn" type="button" class="primary">Load model</button>
+            <span id="modelInfo" class="muted">No model loaded.</span>
+          </div>
+          <p id="versionNote" class="note" hidden></p>
+          <p id="classList" class="fine" hidden></p>
+        </section>
+
+        <section class="panel" aria-labelledby="image-heading">
+          <h2 id="image-heading">Classify an uploaded image</h2>
+          <input id="imageInput" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp">
+          <div class="actions">
+            <label for="imageInput" class="button-like">Choose image</label>
+            <span id="fileName" class="muted">PNG, JPEG or WebP, up to 8 MB</span>
+          </div>
+          <div class="preview-frame">
+            <img id="preview" alt="Selected test image" hidden>
+            <p id="previewHint" class="muted">Your image will appear here.</p>
+          </div>
+          <div class="actions">
+            <button type="button" id="classifyBtn" class="primary" disabled>Classify image</button>
+            <span id="status" role="status" aria-live="polite">Load a model and choose an image.</span>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="cam-heading">
+          <h2 id="cam-heading">Webcam recognition</h2>
+          <p class="fine">For live demos only. Use image upload for the 36 recorded test cases.</p>
+          <div id="webcamBox" class="preview-frame cam-frame">
+            <p id="webcamHint" class="muted">Camera is off.</p>
+          </div>
+          <div class="actions">
+            <button type="button" id="camStartBtn">Start webcam</button>
+            <button type="button" id="camStopBtn" disabled>Stop webcam</button>
+            <span id="camStatus" class="muted" role="status" aria-live="polite"></span>
+          </div>
+        </section>
+      </div>
+
+      <aside class="col-side">
+        <section class="panel results" aria-labelledby="results-heading">
+          <h2 id="results-heading">Prediction</h2>
+          <p class="fine" id="resultSource">No prediction yet.</p>
+          <div class="top-result">
+            <strong id="topClass">—</strong>
+            <span id="topConfidence">—</span>
+          </div>
+          <div id="warning" class="warning" role="alert" hidden></div>
+          <div id="predictions" aria-live="polite"><p class="muted">Scores for every class appear here.</p></div>
+          <p class="fine">A confidence score shows how strongly the model favours a class. It does not prove the prediction is right. Check results against your known labels.</p>
+        </section>
+      </aside>
+    </div>
+
+    <section class="panel" aria-labelledby="log-heading">
+      <div class="log-head">
+        <h2 id="log-heading">Test log <span id="logCount" class="muted"></span></h2>
+        <div class="actions">
+          <button type="button" id="csvBtn" disabled>Download CSV</button>
+          <button type="button" id="clearLogBtn" disabled>Clear log</button>
+        </div>
+      </div>
+      <p class="fine">Each uploaded image is logged with the model version used. Classifying the same file again with the same version updates its row. Add the actual class and Correct Y/N in your workbook.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>File</th><th>Model</th><th>Predicted</th><th>Confidence</th></tr></thead>
+          <tbody id="logBody"><tr><td colspan="5" class="muted">No images classified yet.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>Use the same 36 images for V1 and V2. Never train on the reserved test images.</footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
